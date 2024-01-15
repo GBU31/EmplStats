@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <title>Interviews</title>
+</head>
+<body>
+
+<h1>Interviews</h1>
+
+
+{% if interviews %}
+    <ul>
+        {% for interview in interviews %}
+            <li>{{ interview.title }} - {{ interview.date }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No interviews available.</p>
+{% endif %}
+
+<form method="post" action="{% url 'view' %}">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+
+    <button type="submit">Save Interview</button>
+</form>
+
+<canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+
+</body>
+
+<script>
+   const xValues =  ["1", "2","3","4","5", "7", "8", "9", "10", "11", "12/2024"];
+   let lst = []
+    
+
+const yValues = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+{% for interview in interviews %}
+      alert(interview.month);
+      const monthIndex = {{ interview.month|default:0 }} - 1;
+      
+      yValues[monthIndex]++;
+   {% endfor %}
+
+new Chart("myChart", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      data: yValues
+    }]
+  },
+});
+</script>
+</html>
