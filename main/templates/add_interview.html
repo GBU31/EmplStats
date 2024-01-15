@@ -34,18 +34,20 @@
 </body>
 
 <script>
-   const xValues =  ["1", "2","3","4","5", "7", "8", "9", "10", "11", "12/2024"];
+   const xValues =  ["1", "2","3","4","5", "6", "7", "8", "9", "10", "11", "12"];
    let lst = []
     
 
 const yValues = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const interviewData = JSON.parse('{{ interviews_json|safe }}');
 
-{% for interview in interviews %}
-      alert(interview.month);
-      const monthIndex = {{ interview.month|default:0 }} - 1;
-      
-      yValues[monthIndex]++;
-   {% endfor %}
+interviewData.forEach(interview => {
+   yValues[Number(interview['fields']['date'].slice(5, 7))-1]++;
+   console.log(yValues)
+
+   
+});
+
 
 new Chart("myChart", {
   type: "bar",

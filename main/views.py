@@ -6,18 +6,24 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .models import InterviewModel
 from .forms import InterviewForm
+from django.core.serializers import serialize
 
 
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class InterviewView(View):
     template_name = 'add_interview.html'
 
     def get(self, request):
-        interviews = InterviewModel.objects.all()
+        interviews = InterviewModel.objects.filter(user=request.user)
+        interviews_json = serialize('json', interviews)
         form = InterviewForm()
-        return render(request, self.template_name, {'interviews': interviews, 'form': form})
+        return render(request, self.template_name, {'interviews': interviews, 'form': form, 'interviews_json': interviews_json})
 
     def post(self, request):
-        form = InterviewForm(request.POST)
+        
+        mutableData = request.POST.copy()
+        mutableData["user"] = request.user
+        form = InterviewForm(mutableData)
         if form.is_valid():
             form.save()
             return redirect('view')
